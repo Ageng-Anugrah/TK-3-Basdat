@@ -136,7 +136,7 @@ DECLARE
         FROM TRANSAKSI_HOTEL
         ORDER BY IdTransaksi DESC
         limit 1;
-        idTransaksi := lpad((_r::integer + 1)::varchar, 10, '0');
+        idTransaksi := lpad((idTransaksi::integer + 1)::varchar, 10, '0');
 
         RETURN idTransaksi;
     END;

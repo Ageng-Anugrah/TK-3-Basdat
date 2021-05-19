@@ -44,6 +44,10 @@ BEGIN
                 ) AS pesanan_dan_harga
         ) AS final;
 
+    UPDATE TRANSAKSI_MAKAN TM
+    SET totalbayar = jumlah
+    WHERE NEW.idTransaksi = TM.idTransaksi and NEW.IdTransaksiMakan = TM.IdTransaksiMakan;
+
     UPDATE TRANSAKSI_HOTEL TH
     SET totalbayar = totalbayar + jumlah
     WHERE NEW.idTransaksi = TH.idTransaksi;

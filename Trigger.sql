@@ -64,26 +64,20 @@ EXECUTE PROCEDURE add_nominal_transaksi_hotel();
 -- Fina 2.1 --
 CREATE OR REPLACE FUNCTION JADWAL_CHECK() RETURNS TRIGGER AS
 $$
-DECLARE 
-	count_jadwal integer;
+DECLARE
+pasien_counter integer;
 BEGIN
-    SELECT COUNT(*) into count_jadwal
-    FROM MEMERIKSA
-    WHERE Username_Dokter = NEW.Username_Dokter AND 
-          Praktek_Shift = NEW.Praktek_Shift AND
-          Tgl_Periksa = NEW.Tgl_Periksa AND
-		  Kode_Faskes = NEW.Kode_Faskes;
-          
-    IF(count_jadwal >= 30) THEN
-        RAISE EXCEPTION 'Jadwal konsultasi tidak dapat dibuat. Telah terdapat 30 antrian pasien';
+    SELECT JmlPasien into pasien_counter
+    FROM JADWAL_DOKTER
+    WHERE Username = NEW.Username_Dokter AND Tanggal = NEW.Praktek_Tgl;
+
+    IF (pasien_counter>=30) THEN
+        RAISE EXCEPTION 'Jadwal tidak dapat dibuat. Telah terdapat 30 antrian pasien';
+    ELSE
+        UPDATE JADWAL_DOKTER
+        SET JmlPasien = pasien_counter + 1
+        WHERE Username = NEW.Username_Dokter AND Tanggal = NEW.Praktek_Tgl;
 	END IF;
-    UPDATE JADWAL_DOKTER 
-    SET JmlPasien = count_jadwal + 1
-    FROM JADWAL_DOKTER J, MEMERIKSA
-    WHERE J.Username = NEW.Username_Dokter AND
-        J.Tanggal = NEW.Tgl_Periksa AND
-        J.Shift = NEW.Praktek_Shift AND
-        J.Kode_Faskes = NEW.Kode_Faskes;
     RETURN NEW;
 END;
 $$
@@ -95,40 +89,39 @@ FOR EACH ROW
 EXECUTE PROCEDURE JADWAL_CHECK();
 
 -- Fina 2.2 --
--- belum -- 
+
 CREATE OR REPLACE FUNCTION INCBED_CHECK() RETURNS trigger AS 
 $$
 BEGIN
-	UPDATE RUANGAN_RS 
-	SET JmlBed = JmlBed + 1
-	WHERE KodeRS = NEW.KodeRS AND
-		  KodeRuangan = NEW.KodeRuangan;
-	RETURN NEW;
-END;
-$$ 
-LANGUAGE PLPGSQL;
-
-CREATE TRIGGER INCJUMLAHBED
-AFTER INSERT ON BED_RS
-FOR EACH ROW
-EXECUTE PROCEDURE JUMLAHBED_CHECK();
-
-CREATE OR REPLACE FUNCTION DECJUMLAHBED_CHECK() RETURNS trigger AS 
-$$
-BEGIN
-	UPDATE RUANGAN_RS 
-	SET JmlBed = JmlBed - 1
-	WHERE KodeRS = NEW.KodeRS AND
-		  KodeRuangan = NEW.KodeRuangan;
+    UPDATE RUANGAN_RS 
+    SET JmlBed = JmlBed + 1
+    WHERE KodeRS = NEW.KodeRS AND KodeRuangan = NEW.KodeRuangan;
     RETURN NEW;
 END;
 $$ 
 LANGUAGE PLPGSQL;
 
-CREATE TRIGGER DECJUMLAHBED
+CREATE OR REPLACE FUNCTION DECBED_CHECK() RETURNS trigger AS 
+$$
+BEGIN
+    UPDATE RUANGAN_RS 
+    SET JmlBed = JmlBed - 1
+    WHERE KodeRS = NEW.KodeRS AND KodeRuangan = NEW.KodeRuangan;
+    RETURN NEW;
+END;
+$$ 
+LANGUAGE PLPGSQL;
+
+CREATE TRIGGER INCBED
+AFTER INSERT ON BED_RS
+FOR EACH ROW
+EXECUTE PROCEDURE INCBED_CHECK();
+
+CREATE TRIGGER DECBED
 AFTER INSERT ON RESERVASI_RS
 FOR EACH ROW
-EXECUTE PROCEDURE JUMLAHBED_CHECK();
+EXECUTE PROCEDURE DECBED_CHECK();
+
 
 ---- Iqbal ----
 

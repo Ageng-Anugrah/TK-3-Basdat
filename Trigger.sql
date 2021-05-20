@@ -128,15 +128,20 @@ CREATE OR REPLACE FUNCTION hotel_id()
 RETURNS VARCHAR AS 
 $$
 DECLARE
-    idTransaksi VARCHAR;
+    id_Transaksi VARCHAR;
+    randomString VARCHAR;
+    randomInt VARCHAR;
     BEGIN
-        SELECT IdTransaksi INTO idTransaksi
-        FROM TRANSAKSI_HOTEL
-        ORDER BY IdTransaksi DESC
-        limit 1;
-        idTransaksi := lpad((idTransaksi::integer + 1)::varchar, 10, '0');
 
-        RETURN idTransaksi;
+        SELECT array_to_string(ARRAY(SELECT chr((97 + round(random() * 25)) :: integer) 
+        FROM generate_series(1,4)), '') INTO randomString;
+
+        SELECT array_to_string(ARRAY(SELECT chr((48 + round(random() * 9)) :: integer) 
+        FROM generate_series(1,6)), '') INTO randomInt;
+
+        SELECT randomString || randomInt INTO id_Transaksi;
+
+        RETURN id_Transaksi;
     END;
 $$ language plpgsql;
 
@@ -148,18 +153,20 @@ $$
         total INT;
         dayDiff INT;
         hargaRoom INT;
-        idTransaksi varchar;
+        idTransaksi varchar := hotel_id();
     BEGIN
-        SELECT DATE_PART('day', NEW.TglKeluar::TIMESTAMP - NEW.TglMasuk::TIMESTAMP) AS dayDiff;
+        SELECT DATE_PART('day', NEW.TglKeluar::TIMESTAMP - NEW.TglMasuk::TIMESTAMP) INTO dayDiff;
         SELECT HARGA into hargaRoom
         FROM HOTEL_ROOM HR
         WHERE HR.KodeHotel = NEW.KodeHotel
         AND HR.KodeRoom = NEW.KodeRoom;
         SELECT dayDiff*hargaRoom INTO total;
-        SELECT hotel_id() INTO idTransaksi;
+        -- SELECT hotel_id() INTO idTransaksi;
         
         INSERT INTO TRANSAKSI_HOTEL(IdTransaksi, KodePasien, TotalBayar, StatusBayar)
         VALUES (idTransaksi, NEW.KodePasien, total, 'Belum Lunas');
+
+        RETURN NEW;
     END;
 $$
 LANGUAGE PLPGSQL;
@@ -169,14 +176,16 @@ CREATE OR REPLACE FUNCTION make_booking_transaction()
 RETURNS TRIGGER AS
 $$
     DECLARE
-        tglMasuk DATE;
+        tgl_Masuk DATE;
     BEGIN
-        SELECT TglMasuk INTO tglMasuk
+        SELECT TglMasuk INTO tgl_Masuk
         FROM RESERVASI_HOTEL RH
         WHERE RH.KodePasien = NEW.KodePasien;
 
         INSERT INTO TRANSAKSI_BOOKING
-        VALUES (NEW.idTransaksi, NEW.KodePasien, tglMasuk, NEW.TotalBayar);
+        VALUES (NEW.idTransaksi, NEW.TotalBayar, NEW.KodePasien, tgl_Masuk);
+
+        RETURN NEW;
     END;
 $$
 LANGUAGE PLPGSQL;

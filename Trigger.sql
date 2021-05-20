@@ -23,36 +23,26 @@ CREATE OR REPLACE FUNCTION add_nominal_transaksi_hotel()
 RETURNS trigger AS 
 $$
 DECLARE 
-    jumlah integer;
+    harga integer;
 BEGIN
-    SELECT SUM(harga) into jumlah
-    FROM (
-            SELECT *
-            FROM (
-                    (
-                        SELECT *
-                        FROM DAFTAR_PESAN DP
-                        WHERE DP.idTransaksiMakan = NEW.idTransaksiMakan and DP.id_transaksi = NEW.idTransaksi
-                    ) AS pesanan_sesuai_transaksi_makan
-                    JOIN PAKET_MAKAN PM 
-                    ON PM.kodeHotel = DP.kodeHotel and PM.kodePaket = DP.kodePaket
-                ) AS pesanan_dan_harga
-        ) AS final;
+    SELECT PM.harga into harga
+    FROM PAKET_MAKAN PM
+    WHERE NEW.kodehotel = PM.kodehotel AND NEW.kodepaket = PM.kodepaket;
 
     UPDATE TRANSAKSI_MAKAN TM
-    SET totalbayar = jumlah
-    WHERE NEW.idTransaksi = TM.idTransaksi and NEW.IdTransaksiMakan = TM.IdTransaksiMakan;
+    SET totalbayar = totalbayar + harga
+    WHERE NEW.id_transaksi = TM.idTransaksi and NEW.IdTransaksiMakan = TM.IdTransaksiMakan;
 
     UPDATE TRANSAKSI_HOTEL TH
-    SET totalbayar = totalbayar + jumlah
-    WHERE NEW.idTransaksi = TH.idTransaksi;
+    SET totalbayar = totalbayar + harga
+    WHERE NEW.id_transaksi = TH.idTransaksi;
     RETURN NEW;
 END 
 $$ 
 LANGUAGE PLPGSQL;
 
 CREATE TRIGGER add_nominal_transaksi_hotel
-AFTER INSERT ON TRANSAKSI_MAKAN 
+AFTER INSERT ON DAFTAR_PESAN
 FOR EACH ROW 
 EXECUTE PROCEDURE add_nominal_transaksi_hotel();
 

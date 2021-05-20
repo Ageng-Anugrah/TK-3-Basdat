@@ -4,15 +4,13 @@ CREATE OR REPLACE FUNCTION CHECK_PASSWORD() RETURNS TRIGGER AS
 $$
 DECLARE 
 	pass text;
-    valid BOOLEAN:= FALSE;
 BEGIN
     SELECT password into pass FROM AKUN_PENGGUNA WHERE username = NEW.username;
-    IF(pass != upper(pass) AND (select pass ~ '^[0-9\.]+$')) THEN
-        valid:= TRUE;
-    END IF;
-    IF (valid) THEN
+    IF((pass ~ '[A-Z]')AND (pass ~ '^[0-9\.]+$')) THEN
         RETURN NEW;
-    END IF;
+    ELSE
+        RAISE EXCEPTION 'Password harus terdapat minimal 1 huruf kapital dan 1 angka';
+	END IF;
 END;
 $$
 LANGUAGE PLPGSQL;

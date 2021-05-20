@@ -21,7 +21,8 @@ $$
 LANGUAGE PLPGSQL;
 
 
-
+-- Diasumsikan bahwa acuan biaya ruangan RS mengacu kepada berkas “Detail Soal Case 2 (SIRUCO) [Rev 9]” 
+-- yaitu Rp500.000 per hari. Berlaku untuk semua jenis ruangan dan semua jenis rumah sakit.
 CREATE OR REPLACE FUNCTION MAKE_HOSPITAL_TRANSACTION()
 RETURNS TRIGGER AS
 $$

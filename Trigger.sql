@@ -27,7 +27,7 @@ DECLARE
 BEGIN
     SELECT PM.harga into harga
     FROM PAKET_MAKAN PM
-    WHERE NEW.kodehotel = PM.kodehotel AND NEW.kodepaket = PM.kodepaket
+    WHERE NEW.kodehotel = PM.kodehotel AND NEW.kodepaket = PM.kodepaket;
 
     UPDATE TRANSAKSI_MAKAN TM
     SET totalbayar = totalbayar + harga

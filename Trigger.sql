@@ -27,7 +27,7 @@ BEGIN
     IF (TG_OP = 'INSERT') THEN
         SELECT PM.harga into harga
         FROM PAKET_MAKAN PM
-        WHERE NEW.kodehotel = PM.kodehotel AND NEW.kodepaket = PM.kodepaket
+        WHERE NEW.kodehotel = PM.kodehotel AND NEW.kodepaket = PM.kodepaket;
 
         UPDATE TRANSAKSI_MAKAN TM
         SET totalbayar = totalbayar + harga
@@ -41,7 +41,7 @@ BEGIN
     ELSIF (TG_OP = 'DELETE') THEN
         SELECT PM.harga into harga
         FROM PAKET_MAKAN PM
-        WHERE OLD.kodehotel = PM.kodehotel AND OLD.kodepaket = PM.kodepaket
+        WHERE OLD.kodehotel = PM.kodehotel AND OLD.kodepaket = PM.kodepaket;
 
         UPDATE TRANSAKSI_MAKAN TM
         SET totalbayar = totalbayar - harga

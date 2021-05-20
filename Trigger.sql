@@ -239,9 +239,9 @@ $$
         numOfDays int;
         grandTotal int;
     BEGIN
-        SELECT CREATE_ID() into transactionId;
+        SELECT CREATE_ID() INTO transactionId;
 
-        SELECT DATE_PART('day', NEW.TanggalPembayaran::timestamp - NEW.TglMasuk::timestamp) AS numOfDays;
+        SELECT DATE_PART('day', NEW.TanggalPembayaran::timestamp - NEW.TglMasuk::timestamp) INTO numOfDays;
         grandTotal := (numOfDays + 1) * 500000;
 
         INSERT INTO TRANSAKSI_RS 

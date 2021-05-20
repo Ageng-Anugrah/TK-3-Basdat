@@ -242,11 +242,11 @@ $$
         SELECT CREATE_ID() INTO transactionId;
 
         SELECT DATE_PART('day', NEW.TglKeluar::timestamp - NEW.TglMasuk::timestamp) INTO numOfDays;
-        grandTotal := (numOfDays + 1) * 500000;
+        grandTotal := numOfDays * 500000;
 
         INSERT INTO TRANSAKSI_RS 
         VALUES (transactionId, NEW.KodePasien, NULL, NULL, NEW.TglMasuk, grandTotal, 'Belum Lunas');
-        
+
         RETURN NEW;
     END;
 $$

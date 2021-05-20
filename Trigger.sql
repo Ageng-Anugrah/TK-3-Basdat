@@ -156,7 +156,6 @@ $$
         WHERE HR.KodeHotel = NEW.KodeHotel
         AND HR.KodeRoom = NEW.KodeRoom;
         SELECT dayDiff*hargaRoom INTO total;
-        -- SELECT hotel_id() INTO idTransaksi;
         
         INSERT INTO TRANSAKSI_HOTEL(IdTransaksi, KodePasien, TotalBayar, StatusBayar)
         VALUES (idTransaksi, NEW.KodePasien, total, 'Belum Lunas');

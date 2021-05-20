@@ -196,15 +196,21 @@ FOR EACH ROW EXECUTE PROCEDURE make_booking_transaction();
 
 -- Id generator
 CREATE OR REPLACE FUNCTION CREATE_ID()
-RETURNS id AS
+RETURNS VARCHAR(10) AS
 $$
     DECLARE
-        nextId id;
+        nextId VARCHAR(10);
     BEGIN
         SELECT IdTransaksi INTO nextId  
         FROM TRANSAKSI_RS 
         ORDER BY IdTransaksi DESC
         LIMIT 1;
+
+        if nextId is null then
+            nextId := '0000000001';
+            return nextId;
+        end if;
+
         nextId := lpad((nextId::integer + 1)::varchar, 10, '0');
         RETURN nextId;
     END;
@@ -212,12 +218,21 @@ $$
 LANGUAGE PLPGSQL;
 
 -- Function
-CREATE OR REPLACE FUNCTION MAKE_HOSPITAL_TRANSACTION()\
+CREATE OR REPLACE FUNCTION MAKE_HOSPITAL_TRANSACTION()
 RETURNS TRIGGER AS
 $$
+    DECLARE
+        transactionId VARCHAR(10);
+        numOfDays int;
+        grandTotal int;
     BEGIN
+        SELECT CREATE_ID() into transactionId;
+
+        SELECT DATE_PART('day', NEW.TanggalPembayaran::timestamp - NEW.TglMasuk::timestamp) AS numOfDays;
+        grandTotal := (numOfDays + 1) * 500000;
+
         INSERT INTO TRANSAKSI_RS 
-        VALUES (SELECT CREATE_ID(), NEW.KodePasien, NULL, NULL, NEW.TglMasuk, NULL, 'Belum Lunas');
+        VALUES (transactionId, NEW.KodePasien, NULL, NULL, NEW.TglMasuk, grandTotal, 'Belum Lunas');
     END;
 $$
 LANGUAGE PLPGSQL;

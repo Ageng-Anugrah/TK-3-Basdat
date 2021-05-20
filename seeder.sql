@@ -1,4 +1,3 @@
--- Fina --
 INSERT INTO AKUN_PENGGUNA VALUES
     ('nilam.lubis','JdKt5DxeFc','penanggung jawab'),
     ('00kylee','aVT5xw2ku6','penanggung jawab'),
@@ -189,10 +188,6 @@ INSERT INTO JADWAL VALUES
     ('B1','18.00-24.00','2020-05-15 00:00:00'),
     ('B2','06.00-12.00','2020-05-16 00:00:00');
 
--- Gabriel --
-
-
----- Iqbal ----
 INSERT INTO HOTEL VALUES
     ('PL100','Rumah Sakit Bunda Mulia','1','Jl. Medan Merdeka Selatan No.2','Jakabaring','Jakabaring','Palembang','Sumatera Selatan'),
     ('BN571','Rumah Sakit Gunadarma','1','Jl. Margonda Blok H5 No. 9','Citarum','Bandung Wetan','Bandung','Jawa Barat'),
@@ -228,7 +223,7 @@ INSERT INTO RESERVASI_HOTEL VALUES
     (3284343615071287,'2020-10-10 00:00:00','2020-12-21 00:00:00','JK092','GD700'),
     (3210080812740211,'2020-11-28 00:00:00','2021-06-30 00:00:00','PL100','DB450');
 
--- TRANSAKSI_HOTEL & TRANSAKSI_BOOKING AUTO KEBUAT
+-- TRANSAKSI_HOTEL & TRANSAKSI_BOOKING AUTO KEBUAT --
 
 INSERT INTO TRANSAKSI_MAKAN VALUES
     ('ABC9082900','AIL0010001',0),
@@ -237,7 +232,8 @@ INSERT INTO TRANSAKSI_MAKAN VALUES
     ('HUJ2810400','YUI1291009',0),
     ('XY99AJE708','TGS5700800',0);
 
--- Atribut Id_Pesanan auto-increment, dikosongin dulu
+-- Atribut Id_Pesanan auto-increment, dikosongin dulu --
+-- id_transaksi disesuaikan dengan yang digenerate mesin --
 INSERT INTO DAFTAR_PESAN (IdTransaksiMakan, Id_Transaksi, KodeHotel, KodePaket)
 VALUES
     ('AIL0010001','ABC9082900','BN571','LS123'),
@@ -246,7 +242,6 @@ VALUES
     ('YUI1291009','HUJ2810400','TS888','NGPS1'),
     ('TGS5700800','XY99AJE708','JK092','FA090');
 
--- Ageng --
 INSERT INTO rumah VALUES
     ('r1','Rumah Pondok Indah','1','Dulu Aja ','Pondok Pinang ','Kebayoran Lama','Jakarta Selatan','DKI Jakarta'),
     ('r2','Home Sweet Home','1','Mundur','Kemiri Muka','Beji','Depok','Jawa Barat '),

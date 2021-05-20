@@ -1,5 +1,4 @@
 -- 1 --
-
 CREATE OR REPLACE FUNCTION CHECK_PASSWORD() RETURNS TRIGGER AS
 $$
 BEGIN
@@ -25,24 +24,40 @@ $$
 DECLARE 
     harga integer;
 BEGIN
-    SELECT PM.harga into harga
-    FROM PAKET_MAKAN PM
-    WHERE NEW.kodehotel = PM.kodehotel AND NEW.kodepaket = PM.kodepaket;
+    IF (TG_OP = 'INSERT') THEN
+        SELECT PM.harga into harga
+        FROM PAKET_MAKAN PM
+        WHERE NEW.kodehotel = PM.kodehotel AND NEW.kodepaket = PM.kodepaket;
 
-    UPDATE TRANSAKSI_MAKAN TM
-    SET totalbayar = totalbayar + harga
-    WHERE NEW.id_transaksi = TM.idTransaksi and NEW.IdTransaksiMakan = TM.IdTransaksiMakan;
+        UPDATE TRANSAKSI_MAKAN TM
+        SET totalbayar = totalbayar + harga
+        WHERE NEW.id_transaksi = TM.idTransaksi AND NEW.IdTransaksiMakan = TM.IdTransaksiMakan;
 
-    UPDATE TRANSAKSI_HOTEL TH
-    SET totalbayar = totalbayar + harga
-    WHERE NEW.id_transaksi = TH.idTransaksi;
-    RETURN NEW;
+        UPDATE TRANSAKSI_HOTEL TH
+        SET totalbayar = totalbayar + harga
+        WHERE NEW.id_transaksi = TH.idTransaksi;
+        RETURN NEW;
+
+    ELSIF (TG_OP = 'DELETE') THEN
+        SELECT PM.harga into harga
+        FROM PAKET_MAKAN PM
+        WHERE OLD.kodehotel = PM.kodehotel AND OLD.kodepaket = PM.kodepaket;
+
+        UPDATE TRANSAKSI_MAKAN TM
+        SET totalbayar = totalbayar - harga
+        WHERE OLD.id_transaksi = TM.idTransaksi AND OLD.IdTransaksiMakan = TM.IdTransaksiMakan;
+
+        UPDATE TRANSAKSI_HOTEL TH
+        SET totalbayar = totalbayar - harga
+        WHERE OLD.id_transaksi = TH.idTransaksi;
+        RETURN OLD;
+    END IF;
 END 
 $$ 
 LANGUAGE PLPGSQL;
 
 CREATE TRIGGER add_nominal_transaksi_hotel
-AFTER INSERT ON DAFTAR_PESAN
+AFTER INSERT OR DELETE ON DAFTAR_PESAN
 FOR EACH ROW 
 EXECUTE PROCEDURE add_nominal_transaksi_hotel();
 
@@ -182,46 +197,3 @@ FOR EACH ROW EXECUTE PROCEDURE make_hotel_transaction();
 CREATE TRIGGER BOOKING_TRANSACTION
 AFTER INSERT ON TRANSAKSI_HOTEL
 FOR EACH ROW EXECUTE PROCEDURE make_booking_transaction();
-
-
-
-
-
-
-
-
--- Gabriel 3 --
-
--- Id generator
-CREATE OR REPLACE FUNCTION CREATE_ID()
-RETURNS id AS
-$$
-    DECLARE
-        nextId id;
-    BEGIN
-        SELECT IdTransaksi INTO nextId  
-        FROM TRANSAKSI_RS 
-        ORDER BY IdTransaksi DESC
-        LIMIT 1;
-        nextId := lpad((nextId::integer + 1)::varchar, 10, '0');
-        RETURN nextId;
-    END;
-$$
-LANGUAGE PLPGSQL;
-
--- Function
-CREATE OR REPLACE FUNCTION MAKE_HOSPITAL_TRANSACTION()\
-RETURNS TRIGGER AS
-$$
-    BEGIN
-        INSERT INTO TRANSAKSI_RS 
-        VALUES (SELECT CREATE_ID(), NEW.KodePasien, NULL, NULL, NEW.TglMasuk, NULL, 'Belum Lunas');
-    END;
-$$
-LANGUAGE PLPGSQL;
-
--- Trigger
-CREATE TRIGGER ON_CREATE_HOSPITAL_RESERVATION
-AFTER INSERT ON RESERVASI_RS
-FOR EACH ROW
-EXECUTE PROCEDURE MAKE_HOSPITAL_TRANSACTION();

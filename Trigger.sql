@@ -23,36 +23,26 @@ CREATE OR REPLACE FUNCTION add_nominal_transaksi_hotel()
 RETURNS trigger AS 
 $$
 DECLARE 
-    jumlah integer;
+    harga integer;
 BEGIN
-    SELECT SUM(harga) into jumlah
-    FROM (
-            SELECT *
-            FROM (
-                    (
-                        SELECT *
-                        FROM DAFTAR_PESAN DP
-                        WHERE DP.idTransaksiMakan = NEW.idTransaksiMakan and DP.id_transaksi = NEW.idTransaksi
-                    ) AS pesanan_sesuai_transaksi_makan
-                    JOIN PAKET_MAKAN PM 
-                    ON PM.kodeHotel = DP.kodeHotel and PM.kodePaket = DP.kodePaket
-                ) AS pesanan_dan_harga
-        ) AS final;
+    SELECT PM.harga into harga
+    FROM PAKET_MAKAN PM
+    WHERE NEW.kodehotel = PM.kodehotel AND NEW.kodepaket = PM.kodepaket;
 
     UPDATE TRANSAKSI_MAKAN TM
-    SET totalbayar = jumlah
-    WHERE NEW.idTransaksi = TM.idTransaksi and NEW.IdTransaksiMakan = TM.IdTransaksiMakan;
+    SET totalbayar = totalbayar + harga
+    WHERE NEW.id_transaksi = TM.idTransaksi and NEW.IdTransaksiMakan = TM.IdTransaksiMakan;
 
     UPDATE TRANSAKSI_HOTEL TH
-    SET totalbayar = totalbayar + jumlah
-    WHERE NEW.idTransaksi = TH.idTransaksi;
+    SET totalbayar = totalbayar + harga
+    WHERE NEW.id_transaksi = TH.idTransaksi;
     RETURN NEW;
 END 
 $$ 
 LANGUAGE PLPGSQL;
 
 CREATE TRIGGER add_nominal_transaksi_hotel
-AFTER INSERT ON TRANSAKSI_MAKAN 
+AFTER INSERT ON DAFTAR_PESAN
 FOR EACH ROW 
 EXECUTE PROCEDURE add_nominal_transaksi_hotel();
 
@@ -119,19 +109,24 @@ EXECUTE PROCEDURE BED_CHECK();
 ---- Iqbal ----
 
 ---- Auto-Generate idTransaksi Varchar ----
-CREATE OR REPLACE FUNCTION hotel_id() 
+CREATE OR REPLACE FUNCTION hotel_transact_id() 
 RETURNS VARCHAR AS 
 $$
 DECLARE
-    idTransaksi VARCHAR;
+    id_Transaksi VARCHAR;
+    randomString VARCHAR;
+    randomInt VARCHAR;
     BEGIN
-        SELECT IdTransaksi INTO idTransaksi
-        FROM TRANSAKSI_HOTEL
-        ORDER BY IdTransaksi DESC
-        limit 1;
-        idTransaksi := lpad((idTransaksi::integer + 1)::varchar, 10, '0');
 
-        RETURN idTransaksi;
+        SELECT array_to_string(ARRAY(SELECT chr((97 + round(random() * 25)) :: integer) 
+        FROM generate_series(1,4)), '') INTO randomString;
+
+        SELECT array_to_string(ARRAY(SELECT chr((48 + round(random() * 9)) :: integer) 
+        FROM generate_series(1,6)), '') INTO randomInt;
+
+        SELECT randomString || randomInt INTO id_Transaksi;
+
+        RETURN id_Transaksi;
     END;
 $$ language plpgsql;
 
@@ -143,18 +138,19 @@ $$
         total INT;
         dayDiff INT;
         hargaRoom INT;
-        idTransaksi varchar;
+        idTransaksi varchar := hotel_transact_id() ;
     BEGIN
-        SELECT DATE_PART('day', NEW.TglKeluar::TIMESTAMP - NEW.TglMasuk::TIMESTAMP) AS dayDiff;
+        SELECT DATE_PART('day', NEW.TglKeluar::TIMESTAMP - NEW.TglMasuk::TIMESTAMP) INTO dayDiff;
         SELECT HARGA into hargaRoom
         FROM HOTEL_ROOM HR
         WHERE HR.KodeHotel = NEW.KodeHotel
         AND HR.KodeRoom = NEW.KodeRoom;
         SELECT dayDiff*hargaRoom INTO total;
-        SELECT hotel_id() INTO idTransaksi;
         
         INSERT INTO TRANSAKSI_HOTEL(IdTransaksi, KodePasien, TotalBayar, StatusBayar)
         VALUES (idTransaksi, NEW.KodePasien, total, 'Belum Lunas');
+
+        RETURN NEW;
     END;
 $$
 LANGUAGE PLPGSQL;
@@ -164,14 +160,16 @@ CREATE OR REPLACE FUNCTION make_booking_transaction()
 RETURNS TRIGGER AS
 $$
     DECLARE
-        tglMasuk DATE;
+        tgl_Masuk DATE;
     BEGIN
-        SELECT TglMasuk INTO tglMasuk
+        SELECT TglMasuk INTO tgl_Masuk
         FROM RESERVASI_HOTEL RH
         WHERE RH.KodePasien = NEW.KodePasien;
 
         INSERT INTO TRANSAKSI_BOOKING
-        VALUES (NEW.idTransaksi, NEW.KodePasien, tglMasuk, NEW.TotalBayar);
+        VALUES (NEW.idTransaksi, NEW.TotalBayar, NEW.KodePasien, tgl_Masuk);
+
+        RETURN NEW;
     END;
 $$
 LANGUAGE PLPGSQL;

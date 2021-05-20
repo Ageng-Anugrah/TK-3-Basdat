@@ -189,6 +189,63 @@ INSERT INTO JADWAL VALUES
     ('B1','18.00-24.00','2020-05-15 00:00:00'),
     ('B2','06.00-12.00','2020-05-16 00:00:00');
 
+-- Gabriel --
+
+
+---- Iqbal ----
+INSERT INTO HOTEL VALUES
+    ('PL100','Rumah Sakit Bunda Mulia','1','Jl. Medan Merdeka Selatan No.2','Jakabaring','Jakabaring','Palembang','Sumatera Selatan'),
+    ('BN571','Rumah Sakit Gunadarma','1','Jl. Margonda Blok H5 No. 9','Citarum','Bandung Wetan','Bandung','Jawa Barat'),
+    ('JK092','Trisakti Hospital','0','Jl. Perjuangan No. 98S','Grogol','Grogol','Jakarta Barat','DKI Jakarta'),
+    ('MK677','Rumah Sakit Pelita Harapan','0','Jl. Kenangan Manis No. 18','Barana','Makassar','Makassar','Sulawesi Selatan'),
+    ('TS888','Insan Cendekia Hospital','1','Jl. Sama Kamu No.1','Ciater','Serpong','Tangerang Selatan','Banten');
+
+INSERT INTO HOTEL_ROOM VALUES
+    ('JK092','GD700','King Bed','Deluxe',600000),
+    ('JK092','GD701','King Bed','Deluxe',600000),
+    ('PL100','DA450','King Bed','Suite',800000),
+    ('PL100','DB450','Single Bed','Premium',500000),
+    ('MK677','R0101','Single Bed','Premium',450000),
+    ('MK677','R0102','Single Bed','Premium',450000),
+    ('TS888','IC020','King Bed','Suite',900000),
+    ('TS888','IC022','King Bed','Suite',900000),
+    ('BN571','A932','Single Bed','Deluxe',650000),
+    ('BN571','A933','Single Bed','Deluxe',650000);
+
+INSERT INTO PAKET_MAKAN VALUES
+    ('JK092','FA090','Nasi Omelette',20000),
+    ('JK092','FS022','Bubur Ayam',15000),
+    ('TS888','NGPS1','Nasi Goreng Spesial',23000),
+    ('MK677','MM071','Nasi Ayam Goreng',25000),
+    ('PL100','NI890','Nasi Indomie Kornet',19000),
+    ('BN571','AP456','Ayam Penyet Balado',30000),
+    ('BN571','LS123','Lontong Sayur',20000);
+
+INSERT INTO RESERVASI_HOTEL VALUES
+    (5110230805770051,'2020-05-11 00:00:00','2020-09-23 00:00:00','BN571','A933'),
+    (3688115074487853,'2020-09-28 00:00:00','2021-04-07 00:00:00','TS888','IC022'),
+    (1102010909981105,'2020-07-18 00:00:00','2021-01-01 00:00:00','MK677','R0101'),
+    (3284343615071287,'2020-10-10 00:00:00','2020-12-21 00:00:00','JK092','GD700'),
+    (3210080812740211,'2020-11-28 00:00:00','2021-06-30 00:00:00','PL100','DB450');
+
+-- TRANSAKSI_HOTEL & TRANSAKSI_BOOKING AUTO KEBUAT
+
+INSERT INTO TRANSAKSI_MAKAN VALUES
+    ('ABC9082900','AIL0010001',20000),
+    ('DEF1234567','UIU7870909',19000),
+    ('RE01PY8000','FOO1010BAR',25000),
+    ('HUJ2810400','YUI1291009',23000),
+    ('XY99AJE708','TGS5700800',20000);
+
+-- Atribut Id_Pesanan auto-increment, dikosongin dulu
+INSERT INTO DAFTAR_PESAN (IdTransaksiMakan, Id_Transaksi, KodeHotel, KodePaket)
+VALUES
+    ('AIL0010001','ABC9082900','BN571','LS123'),
+    ('UIU7870909','DEF1234567','PL100','NI890'),
+    ('FOO1010BAR','RE01PY8000','MK677','MM071'),
+    ('YUI1291009','HUJ2810400','TS888','NGPS1'),
+    ('TGS5700800','XY99AJE708','JK092','FA090');
+
 -- Ageng --
 INSERT INTO rumah VALUES
     ('r1','Rumah Pondok Indah','1','Dulu Aja ','Pondok Pinang ','Kebayoran Lama','Jakarta Selatan','DKI Jakarta'),
@@ -279,59 +336,3 @@ INSERT INTO reservasi_gedung VALUES
     ('3284343615071287','2020-11-25 00:00:00','2020-12-12 00:00:00','g4','ru1','t1'),
     ('3217043568559759','2020-12-14 00:00:00','2020-12-31 00:00:00','g4','ru1','t2'),
     ('3235694879182454','2021-02-08 00:00:00','2021-02-19 00:00:00','g5','ru1','t2');
-
----- Iqbal ----
-INSERT INTO HOTEL VALUES
-    ('PL100','Rumah Sakit Bunda Mulia','1','Jl. Medan Merdeka Selatan No.2','Jakabaring','Jakabaring','Palembang','Sumatera Selatan'),
-    ('BN571','Rumah Sakit Gunadarma','1','Jl. Margonda Blok H5 No. 9','Citarum','Bandung Wetan','Bandung','Jawa Barat'),
-    ('JK092','Trisakti Hospital','0','Jl. Perjuangan No. 98S','Grogol','Grogol','Jakarta Barat','DKI Jakarta'),
-    ('MK677','Rumah Sakit Pelita Harapan','0','Jl. Kenangan Manis No. 18','Barana','Makassar','Makassar','Sulawesi Selatan'),
-    ('TS888','Insan Cendekia Hospital','1','Jl. Sama Kamu No.1','Ciater','Serpong','Tangerang Selatan','Banten');
-
-INSERT INTO HOTEL_ROOM VALUES
-    ('JK092','GD700','King Bed','Deluxe',600000),
-    ('JK092','GD701','King Bed','Deluxe',600000),
-    ('PL100','DA450','King Bed','Suite',800000),
-    ('PL100','DB450','Single Bed','Premium',500000),
-    ('MK677','R0101','Single Bed','Premium',450000),
-    ('MK677','R0102','Single Bed','Premium',450000),
-    ('TS888','IC020','King Bed','Suite',900000),
-    ('TS888','IC022','King Bed','Suite',900000),
-    ('BN571','A932','Single Bed','Deluxe',650000),
-    ('BN571','A933','Single Bed','Deluxe',650000);
-
-INSERT INTO PAKET_MAKAN VALUES
-    ('JK092','FA090','Nasi Omelette',20000),
-    ('JK092','FS022','Bubur Ayam',15000),
-    ('TS888','NGPS1','Nasi Goreng Spesial',23000),
-    ('MK677','MM071','Nasi Ayam Goreng',25000),
-    ('PL100','NI890','Nasi Indomie Kornet',19000),
-    ('BN571','AP456','Ayam Penyet Balado',30000),
-    ('BN571','LS123','Lontong Sayur',20000);
-
-INSERT INTO RESERVASI_HOTEL VALUES
-    (5110230805770051,'2020-05-11 00:00:00','2020-09-23 00:00:00','BN571','A933'),
-    (3688115074487853,'2020-09-28 00:00:00','2021-04-07 00:00:00','TS888','IC022'),
-    (1102010909981105,'2020-07-18 00:00:00','2021-01-01 00:00:00','MK677','R0101'),
-    (3284343615071287,'2020-10-10 00:00:00','2020-12-21 00:00:00','JK092','GD700'),
-    (3210080812740211,'2020-11-28 00:00:00','2021-06-30 00:00:00','PL100','DB450');
-
--- TRANSAKSI_HOTEL & TRANSAKSI_BOOKING AUTO KEBUAT
-
-INSERT INTO TRANSAKSI_MAKAN VALUES
-    ('ABC9082900','AIL0010001',20000),
-    ('DEF1234567','UIU7870909',19000),
-    ('RE01PY8000','FOO1010BAR',25000),
-    ('HUJ2810400','YUI1291009',23000),
-    ('XY99AJE708','TGS5700800',20000);
-
--- Atribut Id_Pesanan auto-increment, dikosongin dulu
-INSERT INTO DAFTAR_PESAN (IdTransaksiMakan, Id_Transaksi, KodeHotel, KodePaket)
-VALUES
-    ('AIL0010001','ABC9082900','BN571','LS123'),
-    ('UIU7870909','DEF1234567','PL100','NI890'),
-    ('FOO1010BAR','RE01PY8000','MK677','MM071'),
-    ('YUI1291009','HUJ2810400','TS888','NGPS1'),
-    ('TGS5700800','XY99AJE708','JK092','FA090');
-
--- Gabriel --

@@ -2,11 +2,8 @@
 
 CREATE OR REPLACE FUNCTION CHECK_PASSWORD() RETURNS TRIGGER AS
 $$
-DECLARE 
-	pass text;
 BEGIN
-    SELECT password into pass FROM AKUN_PENGGUNA WHERE username = NEW.username;
-    IF((pass ~ '[A-Z]')AND (pass ~ '^[0-9\.]+$')) THEN
+    IF((NEW.password ~ '[A-Z]') AND (NEW.password ~ '[0-9]')) THEN
         RETURN NEW;
     ELSE
         RAISE EXCEPTION 'Password harus terdapat minimal 1 huruf kapital dan 1 angka';

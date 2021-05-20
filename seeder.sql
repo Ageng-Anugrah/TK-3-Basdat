@@ -289,16 +289,16 @@ INSERT INTO HOTEL VALUES
     ('TS888','Insan Cendekia Hospital','1','Jl. Sama Kamu No.1','Ciater','Serpong','Tangerang Selatan','Banten');
 
 INSERT INTO HOTEL_ROOM VALUES
-    ('JK092','GD700','King Bed','Deluxe',2000000),
-    ('JK092','GD701','King Bed','Deluxe',2000000),
-    ('PL100','DA450','King Bed','Suite',2000000),
-    ('PL100','DB450','Single Bed','Premium',1500000),
-    ('MK677','R0101','Single Bed','Premium',1800000),
-    ('MK677','R0102','Single Bed','Premium',1800000),
-    ('TS888','IC020','King Bed','Suite',2500000),
-    ('TS888','IC022','King Bed','Suite',2500000),
-    ('BN571','A932','Single Bed','Deluxe',1800000),
-    ('BN571','A933','Single Bed','Deluxe',1800000);
+    ('JK092','GD700','King Bed','Deluxe',800000),
+    ('JK092','GD701','King Bed','Deluxe',800000),
+    ('PL100','DA450','King Bed','Suite',900000),
+    ('PL100','DB450','Single Bed','Premium',720000),
+    ('MK677','R0101','Single Bed','Premium',700000),
+    ('MK677','R0102','Single Bed','Premium',700000),
+    ('TS888','IC020','King Bed','Suite',1000000),
+    ('TS888','IC022','King Bed','Suite',1000000),
+    ('BN571','A932','Single Bed','Deluxe',750000),
+    ('BN571','A933','Single Bed','Deluxe',750000);
 
 INSERT INTO PAKET_MAKAN VALUES
     ('JK092','FA090','Nasi Omelette',20000),

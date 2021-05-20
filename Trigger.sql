@@ -124,7 +124,7 @@ EXECUTE PROCEDURE BED_CHECK();
 ---- Iqbal ----
 
 ---- Auto-Generate idTransaksi Varchar ----
-CREATE OR REPLACE FUNCTION hotel_id() 
+CREATE OR REPLACE FUNCTION hotel_transact_id() 
 RETURNS VARCHAR AS 
 $$
 DECLARE
@@ -153,7 +153,7 @@ $$
         total INT;
         dayDiff INT;
         hargaRoom INT;
-        idTransaksi varchar := hotel_id();
+        idTransaksi varchar := hotel_transact_id() ;
     BEGIN
         SELECT DATE_PART('day', NEW.TglKeluar::TIMESTAMP - NEW.TglMasuk::TIMESTAMP) INTO dayDiff;
         SELECT HARGA into hargaRoom

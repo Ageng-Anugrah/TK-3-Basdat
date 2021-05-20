@@ -191,7 +191,7 @@ INSERT INTO JADWAL VALUES
 
 
 
--- Gabriel --
+-- Gabriel Enrique --
 INSERT INTO JADWAL_DOKTER VALUES
     (1201221989217556,'arie.chandra','A1','12.00-18.00','2020-05-16 00:00:00',0.0),
     (1972949637277736,'tommy.abwiyah','A2','06.00-12.00','2020-05-15 00:00:00',0.0),

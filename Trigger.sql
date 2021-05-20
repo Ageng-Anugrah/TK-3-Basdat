@@ -150,16 +150,18 @@ $$
         total INT;
         dayDiff INT;
         hargaRoom INT;
+        idTransaksi varchar;
     BEGIN
-        SELECT DATEDIFF(day, NEW.TglMasuk, NEW.TglKeluar) into dayDiff;
+        SELECT DATE_PART('day', NEW.TglKeluar::TIMESTAMP - NEW.TglMasuk::TIMESTAMP) AS dayDiff;
         SELECT HARGA into hargaRoom
         FROM HOTEL_ROOM HR
         WHERE HR.KodeHotel = NEW.KodeHotel
         AND HR.KodeRoom = NEW.KodeRoom;
         SELECT dayDiff*hargaRoom INTO total;
+        SELECT hotel_id() INTO idTransaksi;
         
         INSERT INTO TRANSAKSI_HOTEL(IdTransaksi, KodePasien, TotalBayar, StatusBayar)
-        VALUES (SELECT hotel_id(), NEW.KodePasien, total, 'Belum Lunas');
+        VALUES (idTransaksi, NEW.KodePasien, total, 'Belum Lunas');
     END;
 $$
 LANGUAGE PLPGSQL;
@@ -176,7 +178,7 @@ $$
         WHERE RH.KodePasien = NEW.KodePasien;
 
         INSERT INTO TRANSAKSI_BOOKING
-        VALUES (NEW.idTransaksi, NEW.KodePasien, tglMasuk, NEW.TotalBayar)
+        VALUES (NEW.idTransaksi, NEW.KodePasien, tglMasuk, NEW.TotalBayar);
     END;
 $$
 LANGUAGE PLPGSQL;

@@ -250,6 +250,7 @@ INSERT INTO rumah VALUES
     ('r5','Rumah Selaso Jatuh Kembar','1','Yang Lurus','Ancol','Pademangan','Jakarta Utara','DKI Jakarta'),
     ('r6','Rumah Panggung','0','Ga Benar','Cibogor','Bogor Tengah ','Bogor','Jawa Barat ');
 
+-- Asumsi kamar rumah rujukan gratis atau berharga 0 --
 INSERT INTO kamar_rumah VALUES
     ('r1','k1','Triple Single Bed',0),
     ('r1','k2','Queen Bed',0),
